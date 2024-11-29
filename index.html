@@ -104,16 +104,8 @@
           drawingcanvas.clear();
       }
      function predecir() {
-    console.log("Iniciando predicción...");
-    if (!modelo) {
-        console.error("El modelo no se ha cargado correctamente.");
-        return;
-    }
-    console.log("Modelo cargado correctamente.");
-
     //Pasar canvas a version 28x28
     resample_single(canvas, 28, 28, smallcanvas);
-    console.log("Canvas redimensionado.");
 
     var imgData = ctx2.getImageData(0,0,28,28);
     var arr = []; //El arreglo completo
@@ -130,11 +122,7 @@
     arr = [arr]; //Meter el arreglo en otro arreglo por que si no tio tensorflow se enoja >:(
     //Nah basicamente Debe estar en un arreglo nuevo en el indice 0, por ser un tensor4d en forma 1, 28, 28, 1
     var tensor4 = tf.tensor4d(arr);
-    console.log("Tensor creado:", tensor4);
-
     var resultados = modelo.predict(tensor4).dataSync();
-    console.log("Resultados de la predicción:", resultados);
-
     var mayorIndice = resultados.indexOf(Math.max.apply(null, resultados));
     console.log("Predicción:", mayorIndice);
 
