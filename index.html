@@ -103,32 +103,43 @@
           ctx1.clearRect(0, 0, canvas.width, canvas.height);
           drawingcanvas.clear();
       }
-      function predecir() { if (!modelo) { console.error("El modelo no se ha cargado correctamente."); return; } // Resto del código... }
-      function predecir() {
-            //Pasar canvas a version 28x28
-            resample_single(canvas, 28, 28, smallcanvas);
+     function predecir() {
+    console.log("Iniciando predicción...");
+    if (!modelo) {
+        console.error("El modelo no se ha cargado correctamente.");
+        return;
+    }
+    console.log("Modelo cargado correctamente.");
 
-            var imgData = ctx2.getImageData(0,0,28,28);
-            var arr = []; //El arreglo completo
-            var arr28 = []; //Al llegar a 28 posiciones se pone en 'arr' como un nuevo indice
-            for (var p=0, i=0; p < imgData.data.length; p+=4) {
-                var valor = imgData.data[p+3]/255;
-                arr28.push([valor]); //Agregar al arr28 y normalizar a 0-1. Aparte queda dentro de un arreglo en el indice 0... again
-                if (arr28.length == 28) {
-                    arr.push(arr28);
-                    arr28 = [];
-                }
-            }
+    //Pasar canvas a version 28x28
+    resample_single(canvas, 28, 28, smallcanvas);
+    console.log("Canvas redimensionado.");
 
-            arr = [arr]; //Meter el arreglo en otro arreglo por que si no tio tensorflow se enoja >:(
-            //Nah basicamente Debe estar en un arreglo nuevo en el indice 0, por ser un tensor4d en forma 1, 28, 28, 1
-            var tensor4 = tf.tensor4d(arr);
-            var resultados = modelo.predict(tensor4).dataSync();
-            var mayorIndice = resultados.indexOf(Math.max.apply(null, resultados));
-            
-            console.log("Prediccion", mayorIndice);
-            document.getElementById("resultado").innerHTML = mayorIndice;
+    var imgData = ctx2.getImageData(0,0,28,28);
+    var arr = []; //El arreglo completo
+    var arr28 = []; //Al llegar a 28 posiciones se pone en 'arr' como un nuevo indice
+    for (var p=0, i=0; p < imgData.data.length; p+=4) {
+        var valor = imgData.data[p+3]/255;
+        arr28.push([valor]); //Agregar al arr28 y normalizar a 0-1. Aparte queda dentro de un arreglo en el indice 0... again
+        if (arr28.length == 28) {
+            arr.push(arr28);
+            arr28 = [];
         }
+    }
+
+    arr = [arr]; //Meter el arreglo en otro arreglo por que si no tio tensorflow se enoja >:(
+    //Nah basicamente Debe estar en un arreglo nuevo en el indice 0, por ser un tensor4d en forma 1, 28, 28, 1
+    var tensor4 = tf.tensor4d(arr);
+    console.log("Tensor creado:", tensor4);
+
+    var resultados = modelo.predict(tensor4).dataSync();
+    console.log("Resultados de la predicción:", resultados);
+
+    var mayorIndice = resultados.indexOf(Math.max.apply(null, resultados));
+    console.log("Predicción:", mayorIndice);
+
+    document.getElementById("resultado").innerHTML = mayorIndice;
+}
 
         /**
          * Hermite resize - fast image resize/resample using Hermite filter. 1 cpu version!
