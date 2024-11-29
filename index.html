@@ -103,7 +103,7 @@
           ctx1.clearRect(0, 0, canvas.width, canvas.height);
           drawingcanvas.clear();
       }
-
+      function predecir() { if (!modelo) { console.error("El modelo no se ha cargado correctamente."); return; } // Resto del código... }
       function predecir() {
             //Pasar canvas a version 28x28
             resample_single(canvas, 28, 28, smallcanvas);
